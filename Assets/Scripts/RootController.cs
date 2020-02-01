@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class RootController : MonoBehaviour
 {
-    public enum State { Active, Dead, Retreat }
+    public enum State { Active, Dead, Retreat, Aim }
     public State ActiveState { get; private set; }
     public bool IsInvincible { get; private set; }
 
@@ -25,6 +25,7 @@ public class RootController : MonoBehaviour
     [SerializeField] float invicibleDuration = 0.5f;
     private Coroutine invicibleCoroutine;
 
+    private Vector2 targetDirection = Vector2.down;
     private float targetRotation;
 
     private void Awake()
@@ -52,6 +53,9 @@ public class RootController : MonoBehaviour
                 break;
             case State.Retreat:
                 OnRetreatUpdate();
+                break;
+            case State.Aim:
+                OnAimUpdate();
                 break;
             default:
                 ActiveState = State.Dead;
@@ -83,9 +87,16 @@ public class RootController : MonoBehaviour
             Input.GetAxis("Vertical")
         ).normalized;
 
-        var target = Quaternion.LookRotation(direction, Vector3.forward);
+        if (direction.sqrMagnitude > 0.4)
+        {
+            targetDirection = direction;
+        }
+
+
+        var target = Quaternion.LookRotation(targetDirection, Vector3.forward);
         var current = Quaternion.Euler(0f, 0f, rigidbody.rotation);
-        rigidbody.SetRotation(Quaternion.Slerp(current, target, rotationSpeed * Time.deltaTime).eulerAngles.z);
+        var amount =  rotationSpeed * Time.deltaTime / Quaternion.Angle(target, current);
+        rigidbody.SetRotation(Quaternion.Slerp(current, target, amount).eulerAngles.z);
 
         //rigidbody.SetRotation(rigidbody.rotation + input * 90f * Time.deltaTime);
         
@@ -105,6 +116,9 @@ public class RootController : MonoBehaviour
             ActiveState = State.Dead;
             rigidbody.velocity = Vector2.zero;
         }
+
+        if (Input.GetKeyDown(KeyCode.R))
+            ActiveState = State.Dead;
     }
 
     private void OnDeadUpdate()
@@ -114,6 +128,8 @@ public class RootController : MonoBehaviour
 
     private void OnRetreatUpdate()
     {
+        rigidbody.gravityScale = 0;
+
         (RootVisual root, int index) = currentRoot.GetPreviousPoint(currentIndex);
         if (root != null)
         {
@@ -127,12 +143,12 @@ public class RootController : MonoBehaviour
         }
         else
         {
-            ExitRetreat();
+            ActiveState = State.Aim;
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ExitRetreat();
+            ActiveState = State.Aim;
         }
     }
 
@@ -145,6 +161,29 @@ public class RootController : MonoBehaviour
         currentRoot.AddPoint(transform.position);
 
         TriggerInvincible();
+    }
+
+    private void OnAimUpdate()
+    {
+        Vector2 position = currentRoot.GetPosition(currentIndex);
+        Vector2 toPlayer = (Vector2)transform.position - position;
+
+        Vector2 perp = Vector2.Perpendicular(toPlayer);
+        // Flip perp if it is facing up
+        if (Vector2.Dot(Vector2.down, perp) < 0f) {
+            perp = -perp;
+        }
+
+
+        rigidbody.MovePosition(transform.position);
+        rigidbody.velocity = Vector2.zero;
+        rigidbody.gravityScale = 0;
+        rigidbody.SetRotation(Quaternion.LookRotation(perp, Vector3.forward).eulerAngles.z);
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            ExitRetreat();
+        if (Input.GetKeyDown(KeyCode.Escape))
+            ActiveState = State.Retreat;
     }
 
     private void OnCollisionEnter2D(Collision2D other)

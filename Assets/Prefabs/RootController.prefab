@@ -232,7 +232,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   line: {fileID: 0}
-  retreatSpeed: 0.5
+  retreatSpeed: 10
+  rotationSpeed: 240
   invicibleDuration: 0.5
 --- !u!58 &6609046917594862590
 CircleCollider2D:
