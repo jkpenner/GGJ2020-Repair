@@ -35,6 +35,7 @@ public class RootController : MonoBehaviour
 
     [SerializeField] GameObject impact;
     [SerializeField] GameObject visual;
+    
 
     private void Awake()
     {
@@ -44,7 +45,6 @@ public class RootController : MonoBehaviour
         this.IsInvincible = false;
 
         gameManager = GameManager.GetInstance();
-        gameManager.SetState(GameState.Active);
 
         Vector2 start = new Vector2(0, 0);
         Vector2 target = Vector2.right;
@@ -275,11 +275,13 @@ public class RootController : MonoBehaviour
         {
             resourceManager.HitWaterResource();
             gameManager.SetState(GameState.Retreat);
+            other.gameObject.GetComponent<WaterSource>().Use();
         }
         else if (other.gameObject.tag == "VictoryWater")
         {
             Debug.Log("Victory");
-            gameManager.SetState(GameState.WinRetreat);
+            //gameManager.SetState(GameState.WinRetreat);
+            gameManager.SetState(GameState.Exit);
         }
         else
         {

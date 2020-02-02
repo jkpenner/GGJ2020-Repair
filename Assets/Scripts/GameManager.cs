@@ -25,10 +25,15 @@ public class GameManager : MonoBehaviour
     public PlayableDirector startSequence;
     public PlayableDirector exitSequence;
 
-    [SerializeField] RootController prefab;
+    [SerializeField] RootController rootController;
     [SerializeField] Transform spawnPosition;
+    [SerializeField] PlayerCamera playerCamera;
 
     public RootController Player { get; private set; }
+
+    private void Awake() {
+        rootController.gameObject.SetActive(false);    
+    }
 
     private void Start()
     {
@@ -43,14 +48,11 @@ public class GameManager : MonoBehaviour
         startSequence.stopped -= OnIntroStopped;
         Debug.Log("Intro Stopped");
 
-        if (prefab.gameObject.activeSelf)
-            prefab.gameObject.SetActive(false);
-
-        this.Player = Instantiate(prefab);
-        this.Player.transform.position = spawnPosition.position;
-        this.Player.gameObject.SetActive(true);
+        rootController.gameObject.SetActive(true);
+        this.Player = rootController;
 
         startSequence.gameObject.SetActive(false);
+        SetState(GameState.Active);
     }
 
     public void SetState(GameState state)
@@ -69,7 +71,7 @@ public class GameManager : MonoBehaviour
 
     private void OnGameExit()
     {
-        Destroy(this.Player.gameObject);
+        this.Player.gameObject.SetActive(false);
         this.exitSequence.gameObject.SetActive(true);
         this.exitSequence.stopped += OnExitStopped;
         this.exitSequence.Play();

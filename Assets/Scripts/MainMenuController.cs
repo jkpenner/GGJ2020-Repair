@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
+using UnityEngine.InputSystem.Users;
+using UnityEngine.InputSystem;
 
 public class MainMenuController : MonoBehaviour {
     public PlayableDirector intro;
@@ -32,6 +34,8 @@ public class MainMenuController : MonoBehaviour {
         input.MainMenu.Quit.performed += (ctx) => {
             Application.Quit();
         };
+        
+        
 
         StartIntro();   
     }
@@ -39,7 +43,7 @@ public class MainMenuController : MonoBehaviour {
     private void OnEnable() {
         input.Enable();
     }
-
+    
     private void OnDisable() {
         input.Disable();
     }

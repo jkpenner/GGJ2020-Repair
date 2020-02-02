@@ -56,15 +56,19 @@
      <Compile Include="Assets\Scripts\GrassTransition.cs" />
      <Compile Include="Assets\Scripts\LeafSway.cs" />
      <Compile Include="Assets\Scripts\MainMenuController.cs" />
+     <Compile Include="Assets\Scripts\PlayerCamera.cs" />
      <Compile Include="Assets\Scripts\PlayerInput.cs" />
      <Compile Include="Assets\Scripts\ResourceManager.cs" />
      <Compile Include="Assets\Scripts\RootController.cs" />
      <Compile Include="Assets\Scripts\RootManager.cs" />
      <Compile Include="Assets\Scripts\RootVisual.cs" />
      <Compile Include="Assets\Scripts\SimpleMover.cs" />
+     <Compile Include="Assets\Scripts\SurfaceController.cs" />
+     <Compile Include="Assets\Scripts\TreeTransition.cs" />
      <Compile Include="Assets\Scripts\UIController.cs" />
      <Compile Include="Assets\Scripts\UIWater.cs" />
      <Compile Include="Assets\Scripts\UnparentOnAwake.cs" />
+     <Compile Include="Assets\Scripts\WaterSource.cs" />
      <None Include="Assets\Demigiant\DOTween\readme.txt" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>H:/Projects/GGJ2020-Repair/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

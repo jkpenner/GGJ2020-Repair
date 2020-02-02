@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3439370228218284813}
   - component: {fileID: 2954741727363110419}
   - component: {fileID: 4721174124873353412}
+  - component: {fileID: 2344140909844930018}
   m_Layer: 0
   m_Name: Water
   m_TagString: Water
@@ -265,3 +266,16 @@ PolygonCollider2D:
       - {x: -1.8432076, y: -2.9211345}
       - {x: -2.1133113, y: -2.7386541}
       - {x: -2.3308506, y: -2.551422}
+--- !u!114 &2344140909844930018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7309441978846941864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbbb997b86148364fbec5ab525f7b12f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  used: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}

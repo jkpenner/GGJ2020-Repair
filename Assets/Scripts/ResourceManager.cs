@@ -11,6 +11,7 @@ public class ResourceManager : MonoBehaviour
     [SerializeField] float waterDrainRate = 2.0f;
     [SerializeField] float waterGainPerCollection = 100f;
 
+    public float Water { get { return water; } }
     public bool IsWaterDrained { get; private set; }
 
     public delegate void WaterEvent(float water);
@@ -27,7 +28,7 @@ public class ResourceManager : MonoBehaviour
             return;
 
 
-        if (!this.IsWaterDrained && this.gameManager.ActiveState != GameState.Intro && this.gameManager.ActiveState != GameState.Exit)
+        if (!this.IsWaterDrained && this.gameManager.ActiveState == GameState.Active)
         {
             this.water -= this.waterDrainRate * Time.deltaTime;
             this.OnWaterChange?.Invoke(this.water);
@@ -45,6 +46,7 @@ public class ResourceManager : MonoBehaviour
         if (!this.IsWaterDrained)
         {
             this.water += this.waterGainPerCollection;
+            this.OnWaterChange?.Invoke(this.water);
         }
     }
 }
