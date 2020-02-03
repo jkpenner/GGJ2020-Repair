@@ -17,6 +17,18 @@ public class RootVisual : MonoBehaviour
         line.positionCount = 0;
     }
 
+    public void SetWater(float water)
+    {
+        Color color = RootConfig.GetColorByWater(water);
+
+        var gradient = new Gradient();
+        gradient.SetKeys(
+            new GradientColorKey[] { new GradientColorKey(color, 0f), new GradientColorKey(color, 1f) },
+            new GradientAlphaKey[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(1f, 0f) }
+        );
+        this.line.colorGradient = gradient;
+    }
+
     public void SetConnection(RootVisual visual, int connectedIndex)
     {
         this.Previous = visual;

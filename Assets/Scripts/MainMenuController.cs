@@ -8,16 +8,20 @@ using DG.Tweening;
 using UnityEngine.InputSystem.Users;
 using UnityEngine.InputSystem;
 
-public class MainMenuController : MonoBehaviour {
+public class MainMenuController : MonoBehaviour
+{
     public PlayableDirector intro;
     public PlayableDirector outro;
     private PlayerInput input;
+    
 
     public bool CanStartGame { get; private set; }
 
     [SerializeField] CanvasGroup canvasGroup;
+    
 
-    private void Awake() {
+    private void Awake()
+    {
         intro.gameObject.SetActive(false);
         outro.gameObject.SetActive(false);
 
@@ -25,26 +29,30 @@ public class MainMenuController : MonoBehaviour {
         this.CanStartGame = false;
 
         input = new PlayerInput();
-        input.MainMenu.Start.performed += (ctx) => {
-            if (this.CanStartGame) 
+        input.MainMenu.Start.performed += (ctx) =>
+        {
+            if (this.CanStartGame)
             {
                 StartOutro();
             }
         };
-        input.MainMenu.Quit.performed += (ctx) => {
+        input.MainMenu.Quit.performed += (ctx) =>
+        {
             Application.Quit();
         };
-        
+
         
 
-        StartIntro();   
+        StartIntro();
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         input.Enable();
     }
-    
-    private void OnDisable() {
+
+    private void OnDisable()
+    {
         input.Disable();
     }
 
@@ -60,7 +68,8 @@ public class MainMenuController : MonoBehaviour {
         this.intro.stopped -= OnIntroStopped;
         this.intro.gameObject.SetActive(false);
 
-        canvasGroup.DOFade(1f, 1f).OnComplete(() => {
+        canvasGroup.DOFade(1f, 1f).OnComplete(() =>
+        {
             this.CanStartGame = true;
         });
     }
@@ -68,7 +77,8 @@ public class MainMenuController : MonoBehaviour {
     private void StartOutro()
     {
         this.CanStartGame = false;
-        canvasGroup.DOFade(0f, 1f).OnComplete(() => {
+        canvasGroup.DOFade(0f, 1f).OnComplete(() =>
+        {
             this.outro.gameObject.SetActive(true);
             this.outro.stopped += OnOutroStopped;
             this.outro.Play();

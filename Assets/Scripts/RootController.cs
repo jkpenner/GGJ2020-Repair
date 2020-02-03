@@ -33,9 +33,9 @@ public class RootController : MonoBehaviour
     private PlayerInput input;
     private Vector2 movementInput;
 
-    [SerializeField] GameObject impact;
-    [SerializeField] GameObject visual;
-    
+    [SerializeField] RootImpact impact;
+    [SerializeField] SpriteRenderer visual;
+    private HashSet<GameObject> hitWaterSources = new HashSet<GameObject>();
 
     private void Awake()
     {
@@ -98,30 +98,45 @@ public class RootController : MonoBehaviour
     {
         input.Enable();
         resourceManager.OnWaterDrained += OnWaterDrained;
+        resourceManager.OnWaterChange += OnWaterChanged;
     }
 
     private void OnDisable()
     {
         resourceManager.OnWaterDrained -= OnWaterDrained;
+        resourceManager.OnWaterChange -= OnWaterChanged;
         input.Disable();
+    }
+
+    private void OnWaterChanged(float water)
+    {
+        var color = RootConfig.GetColorByWater(water);
+        visual.color = color;
+        //Debug.Log("Setting visual's color to : " + visual.color.ToString());
     }
 
     private void OnWaterDrained()
     {
-        if (gameManager.ActiveState != GameState.Retreat && gameManager.ActiveState != GameState.Aim)
-            SpawnImpact();
+        if (gameManager.ActiveState == GameState.Retreat)
+            return;
+        if (gameManager.ActiveState == GameState.Aim)
+            return;
+        if (gameManager.ActiveState == GameState.WinRetreat)
+            return;
+
+        SpawnImpact();
     }
 
     private void Update()
     {
-        visual.SetActive(gameManager.ActiveState == GameState.Active || gameManager.ActiveState == GameState.Aim);
+        visual.gameObject.SetActive(gameManager.ActiveState == GameState.Active || gameManager.ActiveState == GameState.Aim);
 
         if (gameManager.ActiveState == GameState.Exit || gameManager.ActiveState == GameState.Intro)
             return;
 
         if (resourceManager.IsWaterDrained)
         {
-            gameManager.SetState(GameState.Retreat);
+            gameManager.SetState(GameState.Exit);
         }
 
         switch (gameManager.ActiveState)
@@ -140,7 +155,7 @@ public class RootController : MonoBehaviour
                 OnAimUpdate();
                 break;
             default:
-                gameManager.SetState(GameState.Dead);
+                gameManager.SetState(GameState.Exit);
                 break;
         }
     }
@@ -167,7 +182,6 @@ public class RootController : MonoBehaviour
         //rigidbody.SetRotation(rigidbody.rotation + input * 90f * Time.deltaTime);
 
 
-        currentRoot.UpdateLastPosition(transform.position);
 
         if (Vector2.Distance(lastPosition, transform.position) > 0.5f)
         {
@@ -175,6 +189,7 @@ public class RootController : MonoBehaviour
             currentIndex = currentRoot.GetPointCount();
             lastPosition = transform.position;
         }
+        currentRoot.UpdateLastPosition(transform.position);
 
 
         if (IsInvincible == false && this.rootManager.CheckForCollision(transform.position, 0.5f))
@@ -269,11 +284,18 @@ public class RootController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
+        if (gameManager.ActiveState != GameState.Active)
+            return;
 
         SpawnImpact();
         if (other.gameObject.tag == "Water")
         {
-            resourceManager.HitWaterResource();
+
+            if (!hitWaterSources.Contains(other.gameObject))
+            {
+                resourceManager.HitWaterResource();
+                hitWaterSources.Add(other.gameObject);
+            }
             gameManager.SetState(GameState.Retreat);
             other.gameObject.GetComponent<WaterSource>().Use();
         }
@@ -281,6 +303,7 @@ public class RootController : MonoBehaviour
         {
             Debug.Log("Victory");
             //gameManager.SetState(GameState.WinRetreat);
+            resourceManager.HitVictoryResource();
             gameManager.SetState(GameState.Exit);
         }
         else
@@ -309,5 +332,6 @@ public class RootController : MonoBehaviour
         var impact = Instantiate(this.impact);
         impact.transform.position = transform.position;
         impact.transform.rotation = transform.rotation;
+        impact.Setup(this.resourceManager);
     }
 }

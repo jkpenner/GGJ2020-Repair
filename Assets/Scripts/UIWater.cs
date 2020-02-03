@@ -13,6 +13,8 @@ public class UIWater : MonoBehaviour
 
     [SerializeField] Text text;
 
+    [SerializeField] RectTransform fillbar;
+
     private void Awake()
     {
         this.resource = FindObjectOfType<ResourceManager>();
@@ -38,7 +40,8 @@ public class UIWater : MonoBehaviour
 
     private void OnStateChange(GameState state)
     {
-        switch(state) {
+        switch (state)
+        {
             case GameState.Intro:
             case GameState.Exit:
             case GameState.WinRetreat:
@@ -53,10 +56,14 @@ public class UIWater : MonoBehaviour
     private void OnWaterChange(float water)
     {
         text.text = string.Format("Water: {0:0}", ((int)water).ToString().PadLeft(5));
+        fillbar.localScale = new Vector3(
+            Mathf.Clamp01(water / 160), 1f, 1f
+        );
     }
 
     private void OnWaterDrained()
     {
         text.text = "Water: Drained!";
+        fillbar.localScale = new Vector3(0f, 1f, 1f);
     }
 }

@@ -139,3 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6422653c3d394f94ab7d143fbcbfd44b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthyColor: {r: 0.27481765, g: 0.8301887, b: 0.003915994, a: 1}
+  deadColor: {r: 1, g: 0.78213704, b: 0.36320752, a: 1}
+  minWater: 0
+  maxWater: 140

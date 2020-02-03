@@ -7,7 +7,28 @@ public class RootManager : MonoBehaviour
 {
     [SerializeField] RootVisual prefab;
 
+    private ResourceManager resource;
     private List<RootVisual> _visuals = new List<RootVisual>();
+
+    private void Awake() {
+        resource = FindObjectOfType<ResourceManager>();
+    }
+
+    private void OnEnable() {
+        resource.OnWaterChange += OnWaterChange;
+    }
+
+    private void OnDisable() {
+        resource.OnWaterChange -= OnWaterChange;
+    }
+
+    private void OnWaterChange(float water)
+    {
+        foreach(var visual in _visuals)
+        {
+            visual.SetWater(water);
+        }
+    }
 
     public bool CheckForCollision(Vector2 position, float radius)
     {
@@ -39,6 +60,7 @@ public class RootManager : MonoBehaviour
         visual.transform.SetParent(this.transform, true);
         visual.transform.position = position;
         visual.SetConnection(parent, connectedIndex);
+        visual.SetWater(resource.Water);
         _visuals.Add(visual);
     }
 

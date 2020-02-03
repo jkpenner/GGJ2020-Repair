@@ -48,7 +48,8 @@ public class GameManager : MonoBehaviour
         startSequence.stopped -= OnIntroStopped;
         Debug.Log("Intro Stopped");
 
-        rootController.gameObject.SetActive(true);
+        if (rootController != null)
+            rootController.gameObject.SetActive(true);
         this.Player = rootController;
 
         startSequence.gameObject.SetActive(false);

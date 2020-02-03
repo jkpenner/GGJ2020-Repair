@@ -49,4 +49,10 @@ public class ResourceManager : MonoBehaviour
             this.OnWaterChange?.Invoke(this.water);
         }
     }
+
+    public void HitVictoryResource()
+    {
+        this.water = float.MaxValue;
+        this.OnWaterChange?.Invoke(this.water);
+    }
 }
