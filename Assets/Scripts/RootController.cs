@@ -36,6 +36,7 @@ public class RootController : MonoBehaviour
     [SerializeField] RootImpact impact;
     [SerializeField] SpriteRenderer visual;
     private HashSet<GameObject> hitWaterSources = new HashSet<GameObject>();
+    private Vector2 targetPosition;
 
     private void Awake()
     {
@@ -162,6 +163,7 @@ public class RootController : MonoBehaviour
 
     private void OnActiveUpdate()
     {
+        targetPosition = transform.position;
         rigidbody.gravityScale = gravityScale;
         rigidbody.velocity = -transform.up * speed;
 
@@ -207,6 +209,7 @@ public class RootController : MonoBehaviour
 
     private void OnRetreatUpdate()
     {
+
         rigidbody.gravityScale = 0;
         float distLeft = currentRoot.GetDistanceToStart(currentIndex);
         float modifier = 1f;
@@ -220,16 +223,16 @@ public class RootController : MonoBehaviour
             if (root != null)
             {
                 Vector2 target = root.GetPosition(index);
-                Vector2 newPosition = Vector2.MoveTowards(transform.position, target, moveDistance);
+                Vector2 newPosition = Vector2.MoveTowards(targetPosition, target, moveDistance);
 
-                float distTraveled = Vector2.Distance(newPosition, transform.position);
+                float distTraveled = Vector2.Distance(newPosition, targetPosition);
 
                 if (newPosition == target || distTraveled == 0)
                 {
                     currentIndex = index;
                     currentRoot = root;
                 }
-                transform.position = newPosition;
+                targetPosition = newPosition;
 
                 moveDistance -= distTraveled;
             }
@@ -239,6 +242,8 @@ public class RootController : MonoBehaviour
                 return;
             }
         }
+
+        transform.position = Vector3.Lerp(transform.position, targetPosition, 0.75f);
     }
 
     private void ExitRetreat()
